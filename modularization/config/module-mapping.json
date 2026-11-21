@@ -1,24 +1,31 @@
 {
-  "package_root": "com.mris.media",
-  "source_package": "com.example",
-  "strategy": "analysis-first; no source rewriting until mapping is reviewed",
+  "packageRoot": "com.mris.media",
+  "sourcePackage": "com.example",
   "modules": {
-    "core-model": ["Bookmark", "ScannedMediaItem", "TrashedItem", "FileCategory", "StorageStats", "SortOrder", "DirectoryNode", "AudioTrack"],
-    "core-database": ["BookmarkDao", "ScannedMediaDao", "TrashedItemDao", "AppDatabase"],
-    "data-bookmark": ["BookmarkRepository"],
+    "core-database": ["Bookmark", "BookmarkDao", "ScannedMediaItem", "ScannedMediaDao", "TrashedItem", "TrashedItemDao", "AppDatabase"],
+    "data-bookmarks": ["BookmarkRepository"],
     "data-media": ["MediaCatalogRepository"],
-    "feature-files": ["FileExplorerViewModel", "FileExplorerApp", "StoragePermissionCard", "AppHeader", "PinnedFilesCarousel", "StorageSummaryCard", "MicroStat", "CategoryRow", "SearchBarSection", "BreadcrumbPathBar", "FileItemCard", "shareFile", "getFileIconInfo", "EmptyStateView", "DirectoryNode", "buildDirectoryTree", "flattenVisibleTree", "DrawerItem", "SidebarDirectoryTree", "DirectoryTreeItem", "ContextualOperationsToolbar", "SidePreviewPane", "TrashBinDashboard"],
-    "feature-editor": ["TextEditorView", "readDocxText", "readPptxText", "readXlsxData", "readBinaryLegacyText", "getZipContents"],
-    "feature-document": ["ImageViewer", "WordViewer", "ExcelViewer", "PowerPointViewer", "ArchiveViewer", "UnifiedFileContentPreview", "SpecializedFilePreview", "OldSpecializedFilePreview", "DetailRow", "FullscreenDocumentOverlay"],
-    "feature-video": ["VideoPlayer", "FullscreenVideoPlayerDialog", "VideoPlayerTabScreen", "VideoListAndGridContent", "FolderBadge", "VideoItemDropdownMenu"],
-    "feature-audio": ["AudioPlayer", "FullscreenAudioPlayerDialog", "AudioPlayerTabScreen", "AudioListAndGridContent"],
-    "feature-pdf": ["PdfViewer", "FullscreenPdfViewerDialog", "PdfPageItem"],
-    "feature-gallery": ["GalleryTabScreen", "FullscreenImageViewerDialog"],
-    "feature-settings": ["SettingsScreen", "sendFeedbackEmail"],
-    "feature-tools": ["ToolsDashboard", "QrScannerDashboard", "CameraQrScanner", "QrScannerSection", "QrGeneratorSection", "decodeQrCode", "generateQrCode", "convertImagesToPdf", "ImageToPdfSection", "getApkInfo", "installApk"],
-    "feature-home": ["HomeScreen", "FeatureSlide", "AnimatedFeatureBanner"],
+    "core-model": ["FileCategory", "StorageStats", "SortOrder", "DirectoryNode", "AudioTrack", "FeatureSlide"],
     "core-localization": ["Trans", "getLocalizedName"],
-    "core-common": ["formatFileSize", "formatLastModified", "parseMarkdownToAnnotatedString", "MarkdownText"],
-    "app": ["MainActivity"]
-  }
+    "feature-files": ["FileExplorerViewModel", "FileExplorerApp", "AppHeader", "PinnedFilesCarousel", "StorageSummaryCard", "MicroStat", "CategoryRow", "SearchBarSection", "BreadcrumbPathBar", "FileItemCard", "EmptyStateView", "DrawerItem", "SidebarDirectoryTree", "DirectoryTreeItem", "ContextualOperationsToolbar", "SidePreviewPane", "MiniDetailRow", "HomeScreen", "buildDirectoryTree", "flattenVisibleTree", "calculateStorageStats", "calculateDirectorySize", "findFilesRecursively", "copyAndDelete", "deleteRecursive", "initializeDefaultFiles", "performOneTimeFreshCleanup", "loadSearchHistory", "ensureInitialDemoVideosCreated", "shareFile", "getFileIconInfo", "formatFileSize", "formatLastModified"],
+    "feature-gallery": ["GalleryTabScreen", "FullscreenImageViewerDialog", "ImageViewer"],
+    "feature-video": ["VideoPlayerTabScreen", "VideoListAndGridContent", "VideoItemDropdownMenu", "FullscreenVideoPlayerDialog", "VideoPlayer"],
+    "feature-audio": ["AudioPlayerTabScreen", "AudioListAndGridContent", "FullscreenAudioPlayerDialog", "AudioPlayer"],
+    "feature-document": ["TextEditorView", "WordViewer", "ExcelViewer", "PowerPointViewer", "UnifiedFileContentPreview", "SpecializedFilePreview", "OldSpecializedFilePreview", "DetailRow", "readDocxText", "readPptxText", "readXlsxData", "readBinaryLegacyText", "parseMarkdownToAnnotatedString", "MarkdownText", "FullscreenDocumentOverlay"],
+    "feature-pdf": ["PdfViewer", "FullscreenPdfViewerDialog", "PdfPageItem"],
+    "feature-archive": ["ArchiveViewer", "getZipContents"],
+    "feature-trash": ["TrashBinDashboard"],
+    "feature-settings": ["SettingsScreen", "sendFeedbackEmail"],
+    "feature-tools": ["ToolsDashboard", "QrScannerDashboard", "CameraQrScanner", "QrScannerSection", "QrGeneratorSection", "ImageToPdfSection", "decodeQrCode", "generateQrCode", "convertImagesToPdf", "getApkInfo", "installApk"],
+    "feature-home": ["AnimatedFeatureBanner"],
+    "app": ["MainActivity", "StoragePermissionCard", "FileExplorerApp"]
+  },
+  "manualReview": [
+    "Overloaded getLocalizedName functions",
+    "Composable functions currently declared inside FileExplorerViewModel or other declarations, if any",
+    "Functions whose names are not in this mapping",
+    "Android theme package com.example.ui.theme",
+    "All declarations that depend on implicit shared state or private visibility",
+    "Room entity/DAO package and database migration compatibility"
+  ]
 }
