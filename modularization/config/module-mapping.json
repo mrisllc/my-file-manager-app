@@ -1,0 +1,24 @@
+{
+  "package_root": "com.mris.media",
+  "source_package": "com.example",
+  "strategy": "analysis-first; no source rewriting until mapping is reviewed",
+  "modules": {
+    "core-model": ["Bookmark", "ScannedMediaItem", "TrashedItem", "FileCategory", "StorageStats", "SortOrder", "DirectoryNode", "AudioTrack"],
+    "core-database": ["BookmarkDao", "ScannedMediaDao", "TrashedItemDao", "AppDatabase"],
+    "data-bookmark": ["BookmarkRepository"],
+    "data-media": ["MediaCatalogRepository"],
+    "feature-files": ["FileExplorerViewModel", "FileExplorerApp", "StoragePermissionCard", "AppHeader", "PinnedFilesCarousel", "StorageSummaryCard", "MicroStat", "CategoryRow", "SearchBarSection", "BreadcrumbPathBar", "FileItemCard", "shareFile", "getFileIconInfo", "EmptyStateView", "DirectoryNode", "buildDirectoryTree", "flattenVisibleTree", "DrawerItem", "SidebarDirectoryTree", "DirectoryTreeItem", "ContextualOperationsToolbar", "SidePreviewPane", "TrashBinDashboard"],
+    "feature-editor": ["TextEditorView", "readDocxText", "readPptxText", "readXlsxData", "readBinaryLegacyText", "getZipContents"],
+    "feature-document": ["ImageViewer", "WordViewer", "ExcelViewer", "PowerPointViewer", "ArchiveViewer", "UnifiedFileContentPreview", "SpecializedFilePreview", "OldSpecializedFilePreview", "DetailRow", "FullscreenDocumentOverlay"],
+    "feature-video": ["VideoPlayer", "FullscreenVideoPlayerDialog", "VideoPlayerTabScreen", "VideoListAndGridContent", "FolderBadge", "VideoItemDropdownMenu"],
+    "feature-audio": ["AudioPlayer", "FullscreenAudioPlayerDialog", "AudioPlayerTabScreen", "AudioListAndGridContent"],
+    "feature-pdf": ["PdfViewer", "FullscreenPdfViewerDialog", "PdfPageItem"],
+    "feature-gallery": ["GalleryTabScreen", "FullscreenImageViewerDialog"],
+    "feature-settings": ["SettingsScreen", "sendFeedbackEmail"],
+    "feature-tools": ["ToolsDashboard", "QrScannerDashboard", "CameraQrScanner", "QrScannerSection", "QrGeneratorSection", "decodeQrCode", "generateQrCode", "convertImagesToPdf", "ImageToPdfSection", "getApkInfo", "installApk"],
+    "feature-home": ["HomeScreen", "FeatureSlide", "AnimatedFeatureBanner"],
+    "core-localization": ["Trans", "getLocalizedName"],
+    "core-common": ["formatFileSize", "formatLastModified", "parseMarkdownToAnnotatedString", "MarkdownText"],
+    "app": ["MainActivity"]
+  }
+}
