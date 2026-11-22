@@ -1,0 +1,99 @@
+name: Professional Split MainActivity
+
+on:
+  workflow_dispatch:
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Professional Split
+        run: |
+          python3 << 'PYEOF'
+          import re, os, glob
+
+          files = glob.glob('**/MainActivity.kt', recursive=True)
+          path = files[0]
+          folder = os.path.dirname(path)
+          print(f'Found: {path}')
+          text = open(path).read()
+
+          # 1. package + imports আলাদা করা
+          pkg = re.search(r'package.*', text).group(0)
+          imports = "\n".join(re.findall(r'import.*', text))
+
+          # 2. MainActivity এর ভেতরের সব fun বের করা
+          # class এর ভেতরের অংশ
+          body_match = re.search(r'class MainActivity.*?\{([\s\S]*)', text)
+          body = body_match.group(1) if body_match else text
+          funcs = re.split(r'(?=\n\s+(private\s+)?fun\s+)', body)
+          print(f'Total fun: {len(funcs)}')
+
+          # 3. Helper অনুযায়ী ভাগ করা
+          helpers = {
+              'GalleryHelper': ['gallery', 'image', 'photo', 'album', 'thumbnail', 'grid'],
+              'PlayerHelper': ['video', 'audio', 'player', 'play', 'pause', 'media', 'song', 'music'],
+              'MetadataHelper': ['metadata', 'exif', 'info', 'details', 'date', 'size', 'duration'],
+              'FileHelper': ['file', 'folder', 'storage', 'path', 'delete', 'rename', 'copy', 'scan'],
+              'PermissionHelper': ['permission', 'request', 'grant', 'check'],
+          }
+          buckets = {k: [] for k in helpers}
+          buckets['UiHelper'] = []
+
+          for f in funcs:
+              if not f.strip() or 'fun ' not in f:
+                  continue
+              name = re.search(r'fun\s+(\w+)', f)
+              fname = name.group(1).lower() if name else ''
+              placed = False
+              for hname, keys in helpers.items():
+                  if any(k in fname for k in keys):
+                      buckets[hname].append(f)
+                      placed = True
+                      break
+              if not placed:
+                  buckets['UiHelper'].append(f)
+
+          # 4. Helper ফাইল বানানো
+          for hname, flist in buckets.items():
+              if not flist:
+                  continue
+              content = f"{pkg}\n\n{imports}\n\nobject {hname} {{\n"
+              for f in flist:
+                  # private fun -> fun বানানো যাতে MainActivity থেকে ডাকা যায়
+                  f = f.replace('private fun', 'fun')
+                  content += f + "\n"
+              content += "}\n"
+              open(os.path.join(folder, f'{hname}.kt'), 'w').write(content)
+              print(f'Created: {hname}.kt - {len(flist)} functions')
+
+          # 5. নতুন ছোট MainActivity বানানো
+          new_main = f"""{pkg}
+
+          {imports}
+
+          class MainActivity : AppCompatActivity() {{
+              override fun onCreate(savedInstanceState: Bundle?) {{
+                  super.onCreate(savedInstanceState)
+                  setContentView(R.layout.activity_main)
+                  // Gallery
+                  GalleryHelper.loadGallery(this)
+                  // Player setup
+                  // Metadata + File helpers are called from GalleryHelper
+              }}
+          }}
+          """
+          open(path, 'w').write(new_main)
+          print('New small MainActivity.kt created!')
+          PYEOF
+
+      - name: Push
+        run: |
+          git config user.name "MRIS-Bot"
+          git config user.email "bot@mris.com"
+          git add -A
+          git commit -m "Professional split: MainActivity -> Helpers" || echo "Nothing"
+          git push
