@@ -13,5 +13,8 @@ This kit starts with **analysis-only** automation. It deliberately does not spli
 python modularization/scripts/analyze_source.py --source source/MainActivity.kt --out modularization/reports
 ```
 
+## Current limitation
+This repository does not yet include the Android app's Gradle project, manifest, resources, or theme. The separate `extractor/` project is a JVM analysis utility, not the Android app. Consequently, source declarations cannot yet be moved into Android modules and build-validated here. See [the Phase 1 extraction blueprint](modularization/PHASE-1.md) for the module boundaries, extraction order, and validation gates. The production Kotlin source remains unchanged.
+
 ## Next phase
-Use the analysis inventory to prepare a reviewed declaration-to-module map. The actual extraction phase should use Kotlin PSI/compiler parser and run a Gradle build against the complete Android project. This starter does not claim to produce a compilable multi-module project yet.
+Bring in the complete Android Gradle project and confirm its baseline build. Then use the PSI inventory to prepare and review a declaration-to-module map. The extraction phase must preserve imports, package visibility, nested declarations, overloads, references, Compose state, Room schema/migrations, and Android resources; run the Android build and tests after each extraction batch.
