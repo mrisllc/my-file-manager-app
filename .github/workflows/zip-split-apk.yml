@@ -1,0 +1,75 @@
+name: 1 Zip 2 Split 3 APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  full:
+    runs-on: ubuntu-latest
+    steps:
+            - name: Checkout
+        uses: actions/checkout@v4
+
+      # ===== 1. ZIP ভাঙা =====
+            - name: 1 Unzip
+        run: |
+          unzip -o gallery.zip
+          rm -f gallery.zip
+          rm -rf .gradle .idea build app/build
+          chmod +x gradlew
+          ls -la
+
+      # ===== 2. MainActivity ভাঙা =====
+            - name: 2 Split MainActivity
+        run: |
+          python3 << 'PYEOF'
+          import re, os, glob
+          files = glob.glob('**/MainActivity.kt', recursive=True)
+          path = files[0]
+          folder = os.path.dirname(path)
+          text = open(path).read()
+          print(f'Found: {path} - {len(text.splitlines())} lines')
+          pkg = re.search(r'package.*', text).group(0)
+          imports = "\n".join(re.findall(r'import.*', text))
+          # Compose ফাংশন দিয়ে ভাগ করা
+          parts = re.split(r'(?=@Composable|(?=^.*fun\s+))', text, flags=re.M)
+          # 800 লাইন করে ভাগ
+          chunk, lines, no = [], 0, 1
+          for p in parts:
+              l = len(p.splitlines())
+              if lines + l > 800 and chunk:
+                  out = f"{pkg}\n\n{imports}\n\n" + "\n".join(chunk)
+                  open(os.path.join(folder, f'MainActivity_Part{no}.kt'),'w').write(out)
+                  print(f'Created Part{no} - {lines} lines')
+                  chunk, lines, no = [], 0, no+1
+              chunk.append(p); lines += l
+          if chunk:
+              out = f"{pkg}\n\n{imports}\n\n" + "\n".join(chunk)
+              open(os.path.join(folder, f'MainActivity_Part{no}.kt'),'w').write(out)
+              print(f'Created Part{no}')
+          print('Split Done!')
+          PYEOF
+
+      # ===== 3. APK বানানো =====
+            - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+            - name: 3 Build APK
+        run: ./gradlew assembleDebug --stacktrace
+
+            - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MRIS-Gallery-APK
+          path: app/build/outputs/apk/debug/*.apk
+
+            - name: Push Splitted Code
+        run: |
+          git config user.name "MRIS-Bot"
+          git config user.email "bot@mris.com"
+          git add -A
+          git commit -m "Zip unzipped, MainActivity splitted, APK built" || echo "Nothing"
+          git push
